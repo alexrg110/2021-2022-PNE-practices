@@ -1,3 +1,3 @@
-from P_0.sequences import seq0
+from seq0 import *
 
-seq0.seq_ping()
+seq_ping()

@@ -1,7 +1,11 @@
-from P_0.sequences import seq0
+import seq0
 
-seq0.get_filename()
-seq0.seq_read_fasta(filename)
-seq0.seq_count_base(seq)
-
-print(count_a, count_c, count_t, count_g)
+exit = False
+while not exit:
+    filename = seq0.get_filename()
+    if filename == "none":
+        exit = True
+    else:
+        full_seq = seq0.seq_read_fasta(filename)
+        count_a, count_c, count_g, count_t = seq0.seq_count_base(full_seq)
+        print(count_a, count_c, count_g, count_t)

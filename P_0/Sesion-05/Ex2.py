@@ -2,7 +2,6 @@ import seq0
 
 FOLDER = "../Sesion-04/"
 
-filename = input("Enter file's name: ")
 
 print(f"Dna file: {filename}")
 sequence = seq0.seq_read_fasta(FOLDER + filename)

@@ -1,7 +1,7 @@
 import socket
 
 # SERVER IP, PORT
-SERVER_IP = "Localhost"
+SERVER_IP = "localhost"
 SERVER_PORT = 8081
 
 

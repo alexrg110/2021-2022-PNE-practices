@@ -3,19 +3,6 @@ COMPLEMEMTS = {"A": "T", "T": "A", "C": "G", "G": "C"}
 def seq_ping():
     print("Ok")
 
-def get_filename():
-    exit = False
-    while not exit:
-        seq_name = input("Choose a file: ")
-        folder = "../Sesion-04/"
-        f = folder + seq_name
-        try:
-            filename = open(f, "r")
-            exit = True
-            return filename
-        except FileNotFoundError:
-            print("The filename does not exist.")
-
 def seq_read_fasta(filename):
     seq = open(filename, "r").read()
     seq = seq[seq.find("\n"):].replace("\n", "")

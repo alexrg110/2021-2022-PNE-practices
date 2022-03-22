@@ -1,6 +1,8 @@
 from seq1 import Seq
 
-print("-----| Exercise 2 |-----")
+PRACTICE = 1
+EXERCISE = 2
+print(f"-----| Prcatice {PRACTICE}, Exercise {EXERCISE} |-----")
 s1 = Seq()
 s2 = Seq("TATAC")
 print(f"Sequence 1: {s1}")

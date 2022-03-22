@@ -5,11 +5,12 @@ EXERCISE = 3
 
 print(f"-----| Practice {PRACTICE}, Exercise {EXERCISE} |------")
 
-SERVER_IP = "localhost"
-SERVER_PORT = 8080
+SERVER_IP = "127.0.0.1"
+SERVER_PORT = 8081
 
 c = Client(SERVER_IP, SERVER_PORT)
+print(c)
 
 print("Sending a message to the server...")
-response = Client.talk("Testing!!!")
+response = c.talk("Testing!!!")
 print(f"Response: {response}")

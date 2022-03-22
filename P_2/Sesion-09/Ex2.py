@@ -6,7 +6,7 @@ EXERCISE = 2
 print(f"-----| Practice {PRACTICE}, Exercise {EXERCISE} |------")
 
 SERVER_IP = "localhost"
-SERVER_PORT = 8080
+SERVER_PORT = 8081
 
 c = Client(SERVER_IP, SERVER_PORT)
 

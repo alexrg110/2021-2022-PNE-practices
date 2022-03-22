@@ -1,5 +1,7 @@
 from seq1 import Seq
 
-print("-----| Exercise 1 |-----")
+PRACTICE = 1
+EXERCISE = 1
+print(f"-----| Prcatice {PRACTICE}, Exercise {EXERCISE} |-----")
 s = Seq("ACTGA")
 print(f"Sequence 1: (Lenght: {s.len()}) {s}")

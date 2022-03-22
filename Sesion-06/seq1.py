@@ -34,7 +34,7 @@ class Gene(Seq):
         print("New gene created")
 
     def __str__(self):
-        return  self.name + "-" + self.bases
+        return self.name + "-" + self.bases
 
 
 

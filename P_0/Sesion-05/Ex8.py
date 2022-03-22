@@ -1,5 +1,5 @@
 from seq0 import*
-FOLDER = "../Sesion-04/"
+FOLDER = "./Genes/"
 list_genes = ["U5", "ADA", "FRAT1", "FXN", "RNU6_269P"]
 
 for i in list_genes:

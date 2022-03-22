@@ -1,6 +1,8 @@
 from seq1 import Seq
 
-print("-----| Exercise 7 |-----")
+PRACTICE = 1
+EXERCISE = 7
+print(f"-----| Prcatice {PRACTICE}, Exercise {EXERCISE} |-----")
 seqs_list = [Seq(), Seq("ACTGA"), Seq("Invalid sequence")]
 for index, seq in enumerate(seqs_list):
     print(f"Sequence {index}: (Lenght: {seq.len()} {seq})")

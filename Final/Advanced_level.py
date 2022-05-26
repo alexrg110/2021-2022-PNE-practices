@@ -11,7 +11,7 @@ import http.client
 HTML_FOLDER = "./html/"
 SERVER = "rest.ensembl.org"
 PARAMS = '?content-type=application/json'
-PORT = 8080
+PORT = 22000
 dict_genes = {"FRAT1": "ENSG00000165879", "ADA": "ENSG00000196839", "FXN": "ENSG00000165060",
           "RNU6_269P": "ENSG00000212379", "MIR633": "ENSG00000207552", "TTTY4C": "ENSG00000228296",
            "RBMY2YP": "ENSG00000227633", "FGFR3": "ENSG00000068078", "KDR": "ENSG00000128052",
@@ -71,32 +71,25 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     data_species = make_request_ensembl("/info/species")
                     list1 = data_species['species']
                     empty_list = []
-                    if number <= len(list1):
-                        for i in range(0, number):
-                            empty_list.append(list1[i]['common_name'])
+                    for i in range(0, number):
+                        empty_list.append(list1[i]['common_name'])
 
-                        if "json" in arguments:
-                            contents = {"species": empty_list,
-                                "length": len(list1),
-                                "number": number}
-                        else:
-                            contents = read_html_file(path[1:] + ".html") \
+                    if "json" in arguments:
+                        contents = {"species": empty_list,
+                            "length": len(list1),
+                            "number": number}
+                    else:
+                        contents = read_html_file(path[1:] + ".html") \
                             .render(context={"species": empty_list,
                                 "length": len(list1),
                                 "number": number})
-                    else:
+                except IndexError:
                         contents = read_html_file("error.html").render()
                 except ValueError:
-                    if "json" not in arguments:
-                        contents = read_html_file("error.html").render()
-                    else:
-                        contents = {"ERROR during transmission. Try again"}
-                except KeyError:
-                    if "json" not in arguments:
-                        contents = read_html_file("error.html").render()
-                    else:
-                        contents = {"ERROR during transmission. Try again"}
+                    contents = read_html_file("error.html").render()
 
+                except KeyError:
+                    contents = read_html_file("error.html").render()
         elif path == "/karyotype":
                 try:
                     gene = arguments['karyotype'][0]
@@ -108,15 +101,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         contents = read_html_file(path[1:] + ".html") \
                         .render(context={"karyotype": new_dict})
                 except KeyError:
-                    if "json" not in arguments:
-                        contents = read_html_file("error.html").render()
-                    else:
-                        contents = {"ERROR during transmission. Try again"}
+                    contents = read_html_file("error.html").render()
+
                 except TypeError:
-                    if "json" not in arguments:
-                        contents = read_html_file("error.html").render()
-                    else:
-                        contents = {"ERROR during transmission. Try again"}
+                    contents = read_html_file("error.html").render()
 
         elif path == "/chromosomeLength":
                 try:
@@ -134,10 +122,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         contents = read_html_file(path[1:] + ".html") \
                         .render(context={"length": length})
                 except KeyError:
-                    if "json" not in arguments:
-                        contents = read_html_file("error.html").render()
-                    else:
-                        contents = {"ERROR during transmission. Try again"}
+                    contents = read_html_file("error.html").render()
+
 
         elif path == "/geneSeq":
                 try:
@@ -151,10 +137,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         contents = read_html_file(path[1:] + ".html") \
                         .render(context={"seq": new_dict})
                 except KeyError:
-                    if "json" not in arguments:
                         contents = read_html_file("error.html").render()
-                    else:
-                        contents = {"ERROR during transmission. Try again"}
+
 
         elif path == "/geneInfo":
                 try:
@@ -168,7 +152,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     length = end - start
 
                     if "json" in arguments:
-                            contents = {"start": start,
+                         contents = {"start": start,
                                      "end": end,
                                      "length": length,
                                      "id": gene_name,
@@ -181,10 +165,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                      "id": gene_name,
                                      "name": gen})
                 except KeyError:
-                    if "json" not in arguments:
-                        contents = read_html_file("error.html").render()
-                    else:
-                        contents = {"ERROR during transmission. Try again"}
+                    contents = read_html_file("error.html").render()
+
 
         elif path == "/geneCalc":
                 try:
@@ -206,10 +188,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                  "base": base,
                                  "bases": bases})
                 except KeyError:
-                    if "json" not in arguments:
-                        contents = read_html_file("error.html").render()
-                    else:
-                        contents = {"ERROR during transmission. Try again"}
+                       contents = read_html_file("error.html").render()
 
         elif path == "/geneList":
                 try:
@@ -231,11 +210,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         .render(context={"empty": empty})
 
                 except KeyError:
-                    if "json" not in arguments:
-                        contents = read_html_file("error.html").render()
-                    else:
-                        contents = {"ERROR during transmission. Try again"}
-
+                    contents = read_html_file("error.html").render()
 
 
         else:

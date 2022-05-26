@@ -3,7 +3,7 @@ PRACTICE = 3
 EXERCISE = 7
 GENES = ["ADA", "FRAT1", "FXN", "RNU6_269P", "U5"]
 BASES = "ACCTCCTCTCCAGCAATGCCAACCCCAGTCCAGGCCCCCATCCGCCCAGGATCTCGATCA"
-COMMANDS = ["PING", "GET", "INFO", "COMP", "REV", "GENE"]
+COMMANDS = ["PING", "GET", "INFO", "COMP", "REV", "LEN", "GENE", "OPE"]
 print(f"-----| {PRACTICE}, {EXERCISE} |-----")
 
 CLIENT_IP = "127.0.0.1"
@@ -33,37 +33,5 @@ for gene in COMMANDS:
         for file in GENES:
             c.debug_talk(f"{gene} {file}")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    elif gene == "OPE":
+        c.debug_talk(f"{gene} {BASES}")

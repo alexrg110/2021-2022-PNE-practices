@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Associated gene</title>
+</head>
+<body style="background-color: tan">
+The name of the genes you have requested are:
+    <p>{% for h in context.empty %}</p>
+    <li>{{h}}</li>
+{% endfor %}
+<p></p>
+<a href="/">Main page</a>
+
+
+</body>
+</html>

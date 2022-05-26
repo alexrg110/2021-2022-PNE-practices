@@ -1,39 +1,37 @@
 class Seq:
+    BASES_ALLOWED = ['A', 'C', 'G', 'T']
+    BASES_COMPLEMENTS = {"A": "T", "C": "G", "T": "A", "G": "C"}
 
-    BASES_ALLOWED = ["A", "C", "G", "T"]
-    BASES_COMPLEMENTS = {"A": "T", "T": "A", "C": "G", "G": "C"}
-
-    @staticmethod #funcion o metodo que corresponde a toda la clase en general
-    def valid_sequence(bases):
-        valid = len(bases) != 0
+    @staticmethod
+    def are_bases_ok(bases):
+        ok = len(bases) != 0
         i = 0
-        while valid and i < len(bases):
-            if bases[i] in Seq.BASES_ALLOWED:
-                 i += 1
-            else:
-                valid = False
-        return valid
+        while ok and i < len(bases):
+            if bases[i] not in Seq.BASES_ALLOWED:
+                ok = False
+            i += 1
+        return ok
 
     def __init__(self, bases="NULL"):
         if bases == "NULL":
             self.bases = bases
             print("NULL sequence created!")
-        elif Seq.valid_sequence(bases):
+        elif Seq.are_bases_ok(bases):
             self.bases = bases
             print("New sequence created!")
         else:
             self.bases = "ERROR"
-            print("INCORRECT sequence detected!")
+            print("INVALID sequence detected!")
 
     def __str__(self):
-        return self.bases
+        return self.bases  # str
 
     def len(self):
         if self.bases == "NULL" or self.bases == "ERROR":
             return 0
         return len(self.bases)
 
-    def count_bases(self, base):
+    def count_base(self, base):
         if self.bases == "NULL" or self.bases == "ERROR":
             return 0
         return self.bases.count(base)
@@ -41,13 +39,12 @@ class Seq:
     def count(self):
         result = {}
         for base in Seq.BASES_ALLOWED:
-            result[base] = self.count_bases(base)
+            result[base] = self.count_base(base)
         return result
 
     def reverse(self):
         if self.bases == "NULL" or self.bases == "ERROR":
             return self.bases
-
         return self.bases[::-1]
 
     def complement(self):
@@ -70,10 +67,8 @@ class Seq:
             self.bases += line
 
     def info(self):
-        result = f"Sequence: {self.bases}\n"
-        result += f"Total lenght: {self.len()}\n"
-
-        d = self.count()
-        for base, count in d.items():
-            result += f"{base}: {count} ({round((count * 100) / self.len(),2)}%)\n"
+        result = f"Sequence: {self.bases}<br>"
+        result += f"Total length: {self.len()}<br>"
+        for base, count in self.count().items():
+            result += f"{base}: {count} ({((count * 100) / self.len()):.1f}%)<br>"
         return result

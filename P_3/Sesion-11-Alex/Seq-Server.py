@@ -1,7 +1,7 @@
 import socket
 import termcolor
 import os
-from sequence import *
+from sequences import *
 
 
 PORT = 23400
@@ -12,6 +12,7 @@ GEN_3 = "CAAGGTCCCCTTCTTCCTTTCCATTCCCGTCAGCTTCATTTCCCTAATCTCCGTACAAAT"
 GEN_4 = "CCCTAGCCTGACTCCCTTTCCTTTCCATCCTCACCAGACGCCCGCATGCCGGACCTCAAA"
 GEN_5 = "AGCGCAAACGCTAAAAACCGGTTGAGTTGACGCACGGAGAGAAGGGGTGTGTGGGTGGGT"
 GENES = [GEN_1, GEN_2, GEN_3, GEN_4, GEN_5]
+
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -92,4 +93,3 @@ except socket.error:
 except KeyboardInterrupt:
         print("Server stopped by the admin")
         server_socket.close()
-

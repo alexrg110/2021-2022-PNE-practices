@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Seq Server 2</title>
+</head>
+<body style="background-color: lemonchiffon">
+<h1>Browsing human and vertebrates genome</h1>
+<h1>Basic Level</h1>
+<hr>
+<form action="/listSpecies">
+    1) Species in genome database:
+    <p></p>
+    Limit: <input type="text" name="number">
+
+    <p></p>
+    <input type="submit" value="Forward">
+</form>
+    <hr>
+<form action="/karyotype">
+    2) Information about the karyotype:
+    <p></p>
+    Select the species: <input type="text" name="karyotype">
+
+    <p></p>
+    <input type="submit" value="Forward">
+</form>
+    <hr>
+
+<form action="/chromosomeLength">
+    3) Chromosome Length:
+    <p></p>
+    Select the species: <input type="text" name="chromosome">
+    <p></p>
+    Select a chromosome: <input type="text" name="longitude">
+    <p></p>
+    <input type="submit" value="Forward">
+
+</form>
+    <hr>
+<h1>Medium level</h1>
+<form action="/geneSeq">
+    4) Human gene sequence:
+    <p></p>
+    Enter human gene you want to obtain: <input type="text" name="sequence">
+    <p></p>
+    <input type="submit" value="Forward">
+</form>
+     <hr>
+
+<form action="/geneInfo">
+    5) Information about human gene sequence:
+    <p></p>
+    Enter the human gene sequence: <input type="text" name="gen">
+
+    <p></p>
+    <input type="submit" value="Forward">
+
+</form>
+     <hr>
+
+<form action="geneCalc">
+    6) Calculations of the sequence:
+    <p></p>
+    Enter the human gene sequence: <input type="text" name="gene">
+    <p></p>
+
+    <input type="submit" value="Forward">
+</form>
+     <hr>
+
+<form action="geneList">
+    7) Name of the associated gene.
+    <p></p>
+    Enter wanted chromosome: <input type="text" name="chromo">
+    <p></p>
+    Enter start point: <input type="text" name="first">
+    <p></p>
+    Enter end point: <input type="text" name="last">
+
+    <p><input type="submit" value="Forward"></p>
+</form>
+
+
+
+
+</body>
+</html>

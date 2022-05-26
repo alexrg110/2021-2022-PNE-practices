@@ -5,56 +5,38 @@ import json
 from pathlib import Path
 import jinja2 as j
 from urllib.parse import parse_qs, urlparse
-from seq1_1 import Seq
+from seq1 import Seq
 import http.client
 
 HTML_FOLDER = "./html/"
 SERVER = "rest.ensembl.org"
+PARAMS = '?content-type=application/json'
 PORT = 8080
-def request_ensembl(endpoint, params=""):
+dict_genes = {"FRAT1": "ENSG00000165879", "ADA": "ENSG00000196839", "FXN": "ENSG00000165060",
+          "RNU6_269P": "ENSG00000212379", "MIR633": "ENSG00000207552", "TTTY4C": "ENSG00000228296",
+           "RBMY2YP": "ENSG00000227633", "FGFR3": "ENSG00000068078", "KDR": "ENSG00000128052",
+           "ANK2": "ENSG00000145362"}
+def read_html_file(filename):
+    contents = Path(HTML_FOLDER + filename).read_text()
+    contents = j.Template(contents)
+    return contents
+
+def make_request_ensembl(endpoint, params=""):
     conn = http.client.HTTPConnection(SERVER)
+    parameters = "?content-type=application/json"
     try:
-        parameters = "?content-type=application/json"
-        conn.request("GET", endpoint+parameters+params)
+        conn.request("GET", endpoint + parameters +params)
     except ConnectionRefusedError:
         print("ERROR! Cannot connect to the Server")
         exit()
     r1 = conn.getresponse()
-    print(f"Response recieved!: {r1.status} {r1.reason}\n")
+    print(f"Response received!: {r1.status} {r1.reason}\n")
     data1 = r1.read().decode("utf-8")
     data2 = json.loads(data1)
     return data2
 
-def read_html_file(filename):
-    contents = Path(filename).read_text()
-    contents = j.Template(contents)
-    return contents
 
 
-def count_bases(seq):
-    d = {"A": 0, "C": 0, "G": 0, "T": 0}
-    for b in seq:
-        d[b] += 1
-
-    total = sum(d.values())
-    for k, v in d.items():
-        d[k] = [v, (v * 100) / total]
-    return d
-
-
-def convert_message(base_count):  # CONVERTIMOS A STRING PARA MANDAR AL HTML
-    message = ""
-    for k, v in base_count.items():
-        message += k + ": " + str(v[0]) + " (" + str(v[1]) + "%)" + "\n"
-    return message
-
-
-def info_operation(arg):  # PARA AHORRA TIEMPO
-    base_count = count_bases(arg)
-    response = "<p> Sequence: " + arg + "</p>"
-    response += "<p> Total length: " + str(len(arg)) + "</p>"
-    response += convert_message(base_count)
-    return response
 
 
 # Define the Server's port
@@ -67,70 +49,144 @@ socketserver.TCPServer.allow_reuse_address = True
 class TestHandler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
-        """This method is called whenever the client invokes the GET method
-        in the HTTP protocol request"""
-        # Print the request line
         termcolor.cprint(self.requestline, 'green')
 
-        # IN this simple server version:
-        # We are NOT processing the client's request
-        # It is a happytest server: It always returns a message saying
-        # that everything is ok
-        url_path = urlparse(self.path)  # va desde la primer / despues de un puerto hasta le final sin la barrita  #urlparse te devulevtodo en tuplas
-        path = url_path.path  # path es endpoint
-        arguments = parse_qs(url_path.query)  # parse_qs devuelve un diccionario
+        url_path = urlparse(self.path)
+
+        path = url_path.path
+        arguments = parse_qs(url_path.query)
         print("The old path was", self.path)
         print("The new path is", url_path.path)
         print("arguments", arguments)
-        # Message to send back to the clinet
+        # Message to send back to the client
         if self.path == "/":
-            contents = read_html_file("index.html") \
-                .render()
+            contents = read_html_file("index.html")\
+                .render(context=
+                        {"genes": SERVER + "info/species" + PARAMS})
+
         elif path == "/listSpecies":
-            number = int(arguments["number"][0])
-            data_species = request_ensembl("/info/species", "")
-            list1 = data_species["species"]
-            empty_list =[]
-            for i in range(0, number):
-                empty_list.append(list1[i]["common_name"])
-            contents = read_html_file(path[1:]+".html").render(context={
-                "animal": empty_list
-            })
+            try:
+                number = int(arguments['number'][0])
+                data_species = make_request_ensembl("/info/species")
+                list1 = data_species['species']
+                empty_list = []
+                for i in range(0, number):
+                    empty_list.append(list1[i]['common_name'])
+
+                contents = read_html_file(path[1:] + ".html") \
+                    .render(context={
+                    "species": empty_list,
+                    "length": len(list1),
+                    "number": number
+                })
+            except ValueError:
+                contents = read_html_file("error.html").render()
+
         elif path == "/karyotype":
-            gene = int(arguments["gene"][0])
+            try:
+                gene = arguments['karyotype'][0]
+                data_species1 = make_request_ensembl("/info/assembly/" + gene)
+                new_dict = data_species1['karyotype']
+                contents = read_html_file(path[1:] + ".html")\
+                    .render(context=
+                    {"karyotype": new_dict})
+            except KeyError:
+                contents = read_html_file("error.html").render()
 
-            contents = read_html_file(path[1:] + ".html") \
-                .render()
-        elif path == "/chromosomeLenght":
-            chromosome = arguments(["chromosome"][0])
+        elif path == "/chromosomeLength":
+            try:
+                chromosome = arguments['chromosome'][0]
+                chromo_number = arguments['longitude'][0]
+                data_species2 = make_request_ensembl("/info/assembly/" + chromosome)
+                dict_1 = data_species2['top_level_region']
+                length = ""
+                for i in dict_1:
+                    if i['coord_system'] == "chromosome" and i['name'] == chromo_number:
+                        length = str(i['length'])
 
-            contents = read_html_file(path[1:] + ".html") \
-                .render()
-        elif path == "/operation":
-            sequence = arguments["sequence"][0]
-            operation = arguments["operation"][0]
-            seq = Seq(sequence)
-            if operation == "rev":
                 contents = read_html_file(path[1:] + ".html") \
-                    .render(context={
-                    "operation": operation,
-                    "result": seq.reverse()
-                })
+                    .render(context=
+                            {"length": length})
+            except KeyError:
+                contents = read_html_file("error.html").render()
+            except IndexError:
+                contents = read_html_file("error.html").render()
 
-            elif operation == "comp":
+        elif path == "/geneSeq":
+            try:
+                gene = arguments['gene'][0]
+                gene_name = dict_genes[gene]
+                data_seq = make_request_ensembl("/sequence/id/" + gene_name)
+                new_dict = data_seq['seq']
                 contents = read_html_file(path[1:] + ".html") \
-                    .render(context={
-                    "operation": operation,
-                    "result": seq.complememt()
-                })
-            elif operation == "info":
+                    .render(context=
+                            {"seq": new_dict})
+            except KeyError:
+                contents = read_html_file("error.html").render()
+
+        elif path == "/geneInfo":
+            try:
+                gene = arguments['gene'][0]
+                gene_name = dict_genes[gene]
+                info = make_request_ensembl("/sequence/id/" + gene_name)
+                new_dict1 = info['desc']
+                slice = new_dict1.split(":")
+                start = int(slice[3])
+                end = int(slice[4])
+                length = end - start
                 contents = read_html_file(path[1:] + ".html") \
-                    .render(context={
-                    "operation": operation,
-                    "result": seq.percentages()
-                })
+                    .render(context=
+                            {"start": start,
+                             "end": end,
+                             "length": length,
+                             "id": gene_name,
+                             "name": gene})
+            except KeyError:
+                contents = read_html_file("error.html").render()
+
+        elif path == "/geneCalc":
+            try:
+                gene = arguments['gene'][0]
+                gene_name = dict_genes[gene]
+                calc = make_request_ensembl("/sequence/id/" + gene_name)
+                new_dict2 = calc['seq']
+                seq = Seq(new_dict2)
+                total_length = seq.len()
+                base = seq.count()
+                bases = seq.percentages()
+                contents = read_html_file(path[1:] + ".html") \
+                    .render(context=
+                            {"total_length": total_length,
+                             "base": base,
+                             "bases": bases})
+            except KeyError:
+                contents = read_html_file("error.html").render()
+
+        elif path == "/geneList":
+            try:
+                chromo = arguments['chromo'][0]
+                first = arguments['first'][0]
+                last = arguments['last'][0]
+                loc_dict = make_request_ensembl("/phenotype/region/homo_sapiens/" + chromo + ":" + first + "-" + last, "")
+                empty = []
+                for i in loc_dict:
+                    dict1 = i['phenotype_associations']
+                    for b in dict1:
+                        if "attributes" in b:
+                            if "associated_gene" in b['attributes']:
+                                empty.append(b["attributes"]["associated_gene"])
+
+                contents = read_html_file(path[1:] + ".html") \
+                    .render(context=
+                            {"empty": empty})
+
+            except KeyError:
+                contents = read_html_file("error.html").render()
+
+
+
         else:
-            contents = "I am the happy server! :-)"
+            contents = open("html/error.html", "r").read()
 
         # Generating the response message
         self.send_response(200)  # -- Status line: OK!
